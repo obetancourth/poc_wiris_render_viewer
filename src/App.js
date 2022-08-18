@@ -1,25 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
+import { useEffect, useRef, useState } from "react";
+import useScript from "./useScript";
+const App = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [mathML, setMathML] = useState(
+    `<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <menclose notation="circle box">
+          <mi> x </mi><mo> + </mo><mi> y </mi>
+        </menclose>
+      </math>`
+  );
+  const ref = useRef();
+  useScript(
+    "https://www.wiris.net/demo/plugins/app/WIRISplugins.js?viewer=image"
+  );
+  const handlerOnChange = (e) => {
+    setMathML(e.target.value);
+  };
+  useEffect(() => {
+    window.com.wiris.js.JsPluginViewer.parseElement(
+      ref.current,
+      true,
+      () => {}
+    );
+  }, [mathML]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Wiris Viewer</h1>
+      <textarea
+        name="data"
+        id=""
+        cols="30"
+        rows="10"
+        value={mathML}
+        onChange={handlerOnChange}
+      ></textarea>
+      <div
+        ref={ref}
+        data-mathml={mathML}
+        dangerouslySetInnerHTML={{ __html: mathML }}
+      />
     </div>
   );
-}
-
+};
 export default App;
